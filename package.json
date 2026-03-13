@@ -1,0 +1,55 @@
+{
+  "name": "earthwork-calculator",
+  "version": "1.0.21",
+  "productName": "EarthworkCalculator v1.021",
+  "description": "Earthwork Quantity Calculator",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shanilgd/Earthwork-Calculator.git"
+  },
+  "build": {
+    "appId": "com.antigravity.earthwork",
+    "productName": "EarthworkCalculator",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "icon.png",
+      "verifyUpdateCodeSignature": false,
+      "forceCodeSigning": false,
+      "cscLink": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "shanilgd",
+        "repo": "Earthwork-Calculator"
+      }
+    ]
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "publish": "electron-builder --publish always"
+  },
+  "keywords": [],
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^26.7.0",
+    "electron-packager": "^17.1.2"
+  },
+  "dependencies": {
+    "electron-log": "^5.4.3",
+    "electron-updater": "^6.7.3",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earthwork Quantity Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
+    </div>
+
+    <div class="app-container">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-layer-group"></i> Earthwork Calculator
+                    <span id="app-version" class="version-tag"
+                        style="font-size: 0.5em; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-weight: 300;"></span>
+                </h1>
+                <p class="subtitle">Cross Section Method Calculation Platform</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="btn-credits" class="btn secondary" style="height: 40px; border-radius: 20px;"
+                    title="Credits & Updates">
+                    <i class="fa-solid fa-star"></i> Credits
+                </button>
+                <button id="btn-changelog" class="btn secondary" style="height: 40px; border-radius: 20px;"
+                    title="View Updates">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Updates
+                </button>
+                <button id="btn-help" class="btn secondary"
+                    style="border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;"
+                    title="Help & Instructions">
+                    <i class="fa-solid fa-question"></i>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Project Details Section -->
+            <section class="card project-card fade-in">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-briefcase"></i> Project Details</h2>
+                </div>
+                <!-- Zone, Division, PWAY Section, Block Section, Line, Km, LH/RH, LOA No -->
+                <div class="config-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="input-group"><label>Zone</label><input type="text" id="proj-zone" placeholder="e.g. SR">
+                    </div>
+                    <div class="input-group"><label>Division</label><input type="text" id="proj-division"
+                            placeholder="e.g. MAS"></div>
+                    <div class="input-group"><label>PWAY Section</label><input type="text" id="proj-pway"
+                            placeholder="e.g. SPE"></div>
+                    <div class="input-group"><label>Block Section</label><input type="text" id="proj-block"
+                            placeholder="e.g. MAS-GDR"></div>
+                    <div class="input-group"><label>Line</label><input type="text" id="proj-line" placeholder="e.g. UP">
+                    </div>
+                    <div class="input-group"><label>Km</label><input type="text" id="proj-km"
+                            placeholder="e.g. 100-101"></div>
+                    <div class="input-group"><label>LH/RH</label><input type="text" id="proj-side"
+                            placeholder="e.g. LH"></div>
+                    <div class="input-group"><label>LOA No</label><input type="text" id="proj-loa"
+                            placeholder="e.g. 123/2025"></div>
+                </div>
+            </section>
+
+            <!-- Configuration Section -->
+            <section class="card config-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-sliders"></i> Configuration</h2>
+                </div>
+                <div class="config-grid">
+                    <div class="input-group">
+                        <label for="work-type">Work Type</label>
+                        <select id="work-type">
+                            <option value="cutting-widening">Cutting Widening (Cut Only)</option>
+                            <option value="cess-repair">Cess Repair (Fill Only)</option>
+                            <option value="normal">Normal (Cut & Fill)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="start-chainage">Start Chainage (km)</label>
+                        <input type="number" id="start-chainage" placeholder="0.000" value="0.000" step="0.001">
+                    </div>
+                    <div class="input-group">
+                        <label for="end-chainage">End Chainage (km)</label>
+                        <input type="number" id="end-chainage" placeholder="0.100" value="0.100" step="0.001">
+                    </div>
+                    <div class="input-group">
+                        <label for="interval">Interval (m)</label>
+                        <input type="number" id="interval" placeholder="10" value="10" step="1">
+                    </div>
+                </div>
+
+                <div class="offsets-config">
+                    <label>Offsets from Center (comma separated, in meters)</label>
+                    <div class="offset-input-wrapper">
+                        <input type="text" id="offset-pattern" placeholder="-10, -5, 0, 5, 10"
+                            value="-10, -5, 0, 5, 10">
+                        <small>Enter "Last Level" offsets. Negative values for Left, Positive for Right.</small>
+                    </div>
+                    <div class="checkbox-wrapper"
+                        style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="use-standard-level" style="width: auto; margin: 0;">
+                        <label for="use-standard-level"
+                            style="margin: 0; color: var(--text-main); font-weight: 400;">Include Standard/Desired Final
+                            Level (Caps Limit)</label>
+                    </div>
+                </div>
+
+                <div class="action-bar" style="gap: 10px; align-items: center;">
+                    <button id="btn-generate" class="btn primary">
+                        <i class="fa-solid fa-table-cells"></i> Generate Grid
+                    </button>
+                    <button id="btn-download-template" class="btn secondary">
+                        <i class="fa-solid fa-file-excel"></i> Template
+                    </button>
+                    <input type="file" id="excel-upload" accept=".xlsx, .xls" style="display: none;">
+                    <button id="btn-import-excel" class="btn secondary">
+                        <i class="fa-solid fa-file-import"></i> Import
+                    </button>
+                    <button id="btn-reset" class="btn secondary" style="background-color: #ef4444; color: white;">
+                        <i class="fa-solid fa-rotate-right"></i> Reset
+                    </button>
+                </div>
+            </section>
+
+            <!-- Data Entry Section -->
+            <section id="data-section" class="card data-card hidden">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-pen-to-square"></i> Input Levels</h2>
+                    <div class="controls">
+                        <button id="btn-calculate" class="btn success">
+                            <i class="fa-solid fa-calculator"></i> Calculate Volume
+                        </button>
+                    </div>
+                </div>
+                <div class="table-scroller">
+                    <table id="levels-table">
+                        <thead>
+                            <!-- Dynamic Header -->
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="card results-card hidden">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-chart-pie"></i> Quantity Report</h2>
+                    <div class="export-controls" style="display: flex; gap: 10px;">
+                        <button id="btn-export-pdf" class="btn secondary">
+                            <i class="fa-solid fa-file-pdf"></i> Export PDF
+                        </button>
+                        <button id="btn-export" class="btn secondary">
+                            <i class="fa-solid fa-file-csv"></i> Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="summary-stats">
+                    <div class="stat-box group-cut">
+                        <span class="stat-label">Total Cut Volume</span>
+                        <span class="stat-value" id="total-cut">0.00 m³</span>
+                    </div>
+                    <div class="stat-box group-fill">
+                        <span class="stat-label">Total Fill Volume</span>
+                        <span class="stat-value" id="total-fill">0.00 m³</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Total Sections</span>
+                        <span class="stat-value" id="total-sections">0</span>
+                    </div>
+                </div>
+
+                <div class="table-scroller">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Chainage</th>
+                                <th class="col-cut">Section Area (Cut)</th>
+                                <th class="col-fill">Section Area (Fill)</th>
+                                <th class="col-cut">Interval Vol (Cut)</th>
+                                <th class="col-fill">Interval Vol (Fill)</th>
+                                <th class="col-cut">Cumulative Vol (Cut)</th>
+                                <th class="col-fill">Cumulative Vol (Fill)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Results Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Help Modal -->
+        <div id="help-modal" class="modal hidden">
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="close-modal" id="close-help-modal">&times;</span>
+                <div class="modal-header">
+                    <h2><i class="fa-solid fa-circle-info"></i> Instructions</h2>
+                </div>
+                <div class="modal-body" style="text-align: left; line-height: 1.6;">
+                    <ol style="padding-left: 20px;">
+                        <li style="margin-bottom: 10px;">This application can be used for calculating <strong>Earthwork
+                                Quantity</strong> for cutting, widening, or cess repair works.</li>
+                        <li style="margin-bottom: 10px;">Data can be imported through an <strong>Excel file</strong>.
+                            However, the format shown in the <strong>Template</strong> must be followed strictly.</li>
+                        <li style="margin-bottom: 10px;">Provision for <strong>Theoretical Profile (Standard
+                                Profile)</strong> is given. If not required, uncheck the corresponding field during
+                            manual data entry, or keep the Excel cells blank while importing data.</li>
+                        <li style="margin-bottom: 10px;">The <strong>Chainage values</strong> are to be fed in
+                            <strong>KMs</strong> (e.g., 48.050). The application will automatically convert the offset
+                            to Metres.
+                        </li>
+                        <li style="margin-bottom: 10px;">All other values (Offsets, Levels) are to be fed in
+                            <strong>Metres</strong>.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph Modal -->
+        <div id="graph-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="modal-header">
+                    <h2>Cross Section at Chainage <span id="modal-chainage">0</span></h2>
+                    <div class="modal-nav">
+                        <button id="prev-graph" class="btn secondary small"><i
+                                class="fa-solid fa-chevron-left"></i></button>
+                        <button id="next-graph" class="btn secondary small"><i
+                                class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="section-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- User Manual Modal -->
+    <div id="manual-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 800px; height: 80vh;">
+            <span class="close-modal" id="close-manual">&times;</span>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem;">
+                <h2><i class="fa-solid fa-book"></i> User Manual</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button id="btn-download-manual" class="btn secondary small" title="Download as PDF">
+                        <i class="fa-solid fa-download"></i> PDF
+                    </button>
+                    <span id="manual-version-tag" style="color: #64748b; font-size: 0.9rem;">v1.006</span>
+                </div>
+            </div>
+            <div class="manual-content-body"
+                style="overflow-y: auto; height: calc(100% - 60px); text-align: left; padding-right: 1rem; line-height: 1.6;">
+                <h3>1. Introduction</h3>
+                <p>The Earthwork Calculator is a specialized tool for calculating Cut/Fill volumes using the Cross
+                    Section Method. It supports complex scenarios such as:</p>
+                <ul>
+                    <li><strong>Variable KM Lengths</strong> (e.g., Km 506 having 1856m).</li>
+                    <li><strong>Specialized Work Types</strong> (Cess Repair, Cutting Widening).</li>
+                    <li><strong>Bridge/Volume Exclusion</strong>.</li>
+                    <li><strong>Excel Integration</strong> for bulk data processing.</li>
+                </ul>
+
+                <h3>2. Getting Started</h3>
+                <ol>
+                    <li><strong>Launch:</strong> Open <code>EarthworkCalculator.exe</code>.</li>
+                    <li><strong>Project Details:</strong> Fill in the project info (Zone, Division, Line, etc.) at the
+                        top. These appear in the PDF Report headers.</li>
+                    <li><strong>Configuration:</strong>
+                        <ul>
+                            <li><strong>Work Type:</strong> Select the mode of calculation (see Section 5).</li>
+                            <li><strong>Offsets:</strong> Define your cross-section points (e.g.,
+                                <code>-10, -5, 0, 5, 10</code> meters from center).
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>3. Data Input Methods</h3>
+
+                <h4>Method A: Excel Import (Recommended)</h4>
+                <p>This is the fastest way to process data.</p>
+                <ol>
+                    <li><strong>Download Template:</strong> Click the <strong>Template</strong> button to get
+                        <code>Earthwork_Template.xlsx</code>.
+                    </li>
+                    <li><strong>Fill Data:</strong>
+                        <ul>
+                            <li><strong>Chainage:</strong> Enter as decimal (e.g., <code>506.400</code>) OR formatting
+                                is handled automatically.</li>
+                            <li><strong>Offset:</strong> Distance from center (negative for Left, positive for Right).
+                            </li>
+                            <li><strong>Levels:</strong> Enter <code>Initial_Level</code> and <code>Final_Level</code>.
+                                If using "Standard Levels", fill <code>Standard_Level</code>.</li>
+                            <li><strong>KmLength (Critical):</strong> In case of short/long Kms, actual length of
+                                long/short Km to be entered in this cell against the last chainage for that Km.
+                                Otherwise keep this blank. For eg, if Km 506 is having only 995m length and from there
+                                km 507 starts. Last chainage where level taken in km 506 is 506/990 and next level is at
+                                507/020. In this situation type 995 in the KmLength column against Km 506/990. System
+                                will automatically assume distance between 506/990 and 507/020 as 25m for volume
+                                calculation.</li>
+                            <li><strong>Remark:</strong> In case of any deduction between any 2 chainages, for eg
+                                availability of bridge in this location and earthwork done is zero, type "Skip" or
+                                "Deduction due to Bridge 542" in the column against end chainage(highest chainage among
+                                the two), so system will give output earthwork volume between these two chainages as
+                                zero.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Import:</strong> Click <strong>Import</strong>, select your file. The App will process
+                        and display the data.</li>
+                </ol>
+
+                <h4>Method B: Manual Entry</h4>
+                <ol>
+                    <li><strong>Configure Grid:</strong> Enter Start Chainage, End Chainage, and Interval (in Meters).
+                    </li>
+                    <li><strong>Generate:</strong> Click <strong>Generate Grid</strong>.</li>
+                    <li><strong>Fill Levels:</strong> Manually type Initial/Final levels in the grid cells.</li>
+                </ol>
+
+                <h3>4. Understanding Chainage Formats</h3>
+                <p>The app uses a <strong>Slash Format</strong> (<code>Km/Meter</code>) to handle complex chainages
+                    accurately.</p>
+                <table class="manual-table" style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Input</th>
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Display</th>
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Meaning</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><code>506.400</code></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><strong>506/400</strong></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;">Km 506, Meter 400</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><code>506.040</code></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><strong>506/040</strong></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;">Km 506, Meter 40</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><code>506.1950</code></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;"><strong>506/1950</strong></td>
+                        <td style="padding: 8px; border: 1px solid #cbd5e1;">Km 506, Meter 1950 (<strong>Excess
+                                Length</strong>)</td>
+                    </tr>
+                </table>
+                <p><em><strong>Note:</strong> If you enter <code>500.1100</code> in the "End Chainage" box, the app
+                        smartly recognizes this as <strong>1100 meters</strong> (Excess), not 110 meters.</em></p>
+
+                <h3>5. Work Types</h3>
+                <ul>
+                    <li><strong>Cutting Widening:</strong> Calculates <strong>Cut Volume</strong> only. Used for
+                        widening existing cuts.</li>
+                    <li><strong>Cess Repair:</strong> Calculates <strong>Fill Volume</strong> only. Used for repairing
+                        embankments.</li>
+                    <li><strong>Normal:</strong> Calculates both Cut and Fill.</li>
+                </ul>
+
+                <h3>6. Generating Reports</h3>
+                <ol>
+                    <li><strong>Calculate:</strong> Click <strong>Calculate Volume</strong>. The results table will
+                        populate.</li>
+                    <li><strong>Preview Graphs:</strong> Click <strong>View Graph</strong> on any row to see the
+                        cross-section visually.</li>
+                    <li><strong>Export PDF:</strong> Click <strong>Export PDF</strong>. The report includes Project
+                        Summary, Detailed Tables (Mean Area x Distance), and Cross Section Graphs.</li>
+                </ol>
+
+                <h3>7. Troubleshooting</h3>
+                <ul>
+                    <li><strong>"Start > End" Error:</strong> Ensure you are entering valid chainages. For excess
+                        lengths (e.g., >1000m), ensure you type the full 4 digits (e.g., <code>.1100</code>).</li>
+                    <li><strong>Calculations look wrong?</strong> Check the <strong>Remark</strong> column. If it says
+                        "Bridge", volume is intentionally zero.</li>
+                    <li><strong>Reset:</strong> Use the <strong>Reset</strong> button to clear data. The app will retain
+                        your last selected "Work Type" for convenience.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Log Modal -->
+    <div id="changelog-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal" id="close-changelog">&times;</span>
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Version History</h2>
+            <div id="changelog-list" class="changelog-item"
+                style="max-height: 400px; overflow-y: auto; text-align: left;">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Credits Modal -->
+    <div id="credits-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <span class="close-modal" id="close-credits">&times;</span>
+            <h2><i class="fa-solid fa-star"></i> Credits</h2>
+            <div style="margin: 20px 0; line-height: 1.6;">
+                <p><strong>Earthwork Calculator</strong></p>
+                <p>Version <span class="credits-version">1.021</span></p>
+                <p style="margin-top: 10px;">Developed by <strong>Antigravity</strong></p>
+                <p>SHANIL G D (SSE PWAY)</p>
+            </div>
+            <button id="btn-check-updates" class="btn primary" style="width: 100%; margin-top: 10px;">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Check for Updates
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Built with <i class="fa-solid fa-bolt"></i> by Antigravity</p>
+        <p style="font-size: 0.9em; margin-top: 5px; font-weight: 600;">By SHANIL G D(SSE PWAY)</p>
+    </footer>
+    </div>
+    <script src="lib/chart.js"></script>
+    <script src="lib/jspdf.umd.min.js"></script>
+    <script src="lib/jspdf.plugin.autotable.min.js"></script>
+    <script src="lib/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
